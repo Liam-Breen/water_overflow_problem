@@ -17,20 +17,21 @@ class Glass:
         queue = deque()
         queue.append((self, water))
 
-        counter = 0
         while len(queue) > 0:
-            counter += 1
+
             popped_glass, popped_glass_water = queue.popleft()
-            capacity_remaining = self.capacity - self.water
+            capacity_remaining = popped_glass.capacity - popped_glass.water
             overflow = max(0.0, popped_glass_water - capacity_remaining)
-            self.water += water - overflow
+            popped_glass.water += popped_glass_water - overflow
+            print(popped_glass.water)
 
             if overflow > 0:
+                child_left, child_right = popped_glass.return_children()
 
-                child_left, child_right = self.return_children()
                 assert child_left and child_right, f"child_left: {child_left}, child_right: {child_right}"
 
                 split_overflow = overflow / 2
+
                 queue.append((child_left, split_overflow))
                 queue.append((child_right, split_overflow))
 
@@ -88,9 +89,6 @@ class Glass:
             child_to_connect.child_left = self.child_right
             self.child_right.parent_right = child_to_connect
 
-
-
-
 class TreeSearch:
 
     def __init__(self, i: int, j: int, water: float):
@@ -100,32 +98,45 @@ class TreeSearch:
         self.root = Glass()
 
     def find_glass(self):
-        ...
-        # return glass
+        first_steps = self.col
+        second_steps = self.row - self.col
+
+
+        glass = self.root
+        while second_steps > 0:
+            glass = glass.child_left
+            if not glass:
+                return 0
+            second_steps -= 1
+
+        while first_steps > 0:
+            glass = glass.child_right
+            if not glass:
+                return 0
+            first_steps -= 1
+
+        return glass.water
 
 
 if __name__ == "__main__":
 
-    glass = Glass()
-    glass.fill(1)
+    test_values = [[0, 0, 0], [1, 1, 0], [1, 1, 2], [3, 2, 4]]
+    expected_outputs = [0, 0, 0.250, 0.250]
 
-    # test_values = [[0, 0, 0], [1, 1, 0], [1, 1, 2], [3, 2, 4]]
-    # expected_outputs = [0, 0, 0.250, 0.250]
+    for index, test_value in enumerate(test_values):
 
-    # for index, test_value in enumerate(test_values):
+        i = test_value[0]
+        j = test_value[1]
+        water = test_value[2]
 
-    #     i = test_values[0]
-    #     j = test_values[1]
-    #     water = test_values[2]
+        tree = TreeSearch(i, j, water)
+        water_level = tree.find_glass()
 
-    #     tree = TreeSearch(i, j, water)
-    #     water_level = tree.find_glass()
+        try:
+            assert water_level == expected_outputs[index], f"The water level was {water_level} when it should have been {expected_outputs[index]}"
 
-    #     try:
-    #         assert water_level == expected_outputs[index], f"The water level was {water_level} when it should have been {expected_outputs[index]}"
-
-    #     except AssertionError as error:
-    #         print(error)
+        except AssertionError as error:
+            print(error)
 
 
 
