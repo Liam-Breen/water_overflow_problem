@@ -7,6 +7,9 @@ class Glass:
         self.child_left = None
         self.child_right = None
 
+        self.parent_left = None
+        self.parent_right = None
+
         self.capacity = 0.250
         self.water = 0
 
@@ -19,8 +22,41 @@ class Glass:
             capacity_remaining = self.capacity - self.water
             overflow = max(0, popped_glass_water - capacity_remaining)
             self.water += water - overflow
-            print(self.water)
-            print(overflow)
+
+            if overflow > 0:
+                left_child, right_child = self.return_children()
+                assert left_child and right_child, f"child_left: {left_child}, child_right: {right_child}"
+
+    def return_children(self):
+
+        if self.child_left and self.child_right:
+            return [self.child_left, self.child_right]
+
+        elif self.child_left and not self.child_right:
+            return self.child_left, self.create_child('right')
+
+        elif not self.child_left and self.child_right:
+            return self.create_child('left'), self.child_right
+
+        elif not self.child_left and not self.child_right:
+            return self.create_child('left'), self.create_child('right')
+
+    def create_child(self, left_or_right):
+        new_child = Glass()
+
+        if 'left' in left_or_right:
+            new_child.parent_right = self
+            self.child_left = new_child
+
+        elif 'right' in left_or_right:
+            new_child.parent_left = self
+            self.child_right = new_child
+
+        return new_child
+
+
+
+
 
 class TreeSearch:
 
@@ -38,7 +74,7 @@ class TreeSearch:
 if __name__ == "__main__":
 
     glass = Glass()
-    glass.fill(1)
+    glass.fill(2)
 
     # test_values = [[0, 0, 0], [1, 1, 0], [1, 1, 2], [3, 2, 4]]
     # expected_outputs = [0, 0, 0.250, 0.250]
