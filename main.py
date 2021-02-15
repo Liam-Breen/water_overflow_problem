@@ -28,6 +28,9 @@ class Glass:
                 child_left, child_right = self.return_children()
                 assert child_left and child_right, f"child_left: {child_left}, child_right: {child_right}"
 
+                split_overflow = overflow / 2
+                queue.append((child_left, split_overflow))
+                queue.append((child_right, split_overflow))
 
     def return_children(self):
 
