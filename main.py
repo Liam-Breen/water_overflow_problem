@@ -24,9 +24,9 @@ class Glass:
             self.water += water - overflow
 
             if overflow > 0:
-                left_child, right_child = self.return_children()
-                assert left_child and right_child, f"child_left: {left_child}, child_right: {right_child}"
 
+                child_left, child_right = self.return_children()
+                assert child_left and child_right, f"child_left: {child_left}, child_right: {child_right}"
 
 
     def return_children(self):
