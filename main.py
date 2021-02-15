@@ -14,11 +14,11 @@ class Glass:
         self.water = 0
 
     def fill(self,water: float):
-        que = deque()
-        que.append((self, water))
+        queue = deque()
+        queue.append((self, water))
 
-        while len(que) > 0:
-            popped_glass, popped_glass_water = que.popleft()
+        while len(queue) > 0:
+            popped_glass, popped_glass_water = queue.popleft()
             capacity_remaining = self.capacity - self.water
             overflow = max(0, popped_glass_water - capacity_remaining)
             self.water += water - overflow
@@ -26,6 +26,8 @@ class Glass:
             if overflow > 0:
                 left_child, right_child = self.return_children()
                 assert left_child and right_child, f"child_left: {left_child}, child_right: {right_child}"
+
+
 
     def return_children(self):
 
@@ -74,7 +76,7 @@ class TreeSearch:
 if __name__ == "__main__":
 
     glass = Glass()
-    glass.fill(2)
+    glass.fill(1)
 
     # test_values = [[0, 0, 0], [1, 1, 0], [1, 1, 2], [3, 2, 4]]
     # expected_outputs = [0, 0, 0.250, 0.250]
