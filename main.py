@@ -17,10 +17,12 @@ class Glass:
         queue = deque()
         queue.append((self, water))
 
+        counter = 0
         while len(queue) > 0:
+            counter += 1
             popped_glass, popped_glass_water = queue.popleft()
             capacity_remaining = self.capacity - self.water
-            overflow = max(0, popped_glass_water - capacity_remaining)
+            overflow = max(0.0, popped_glass_water - capacity_remaining)
             self.water += water - overflow
 
             if overflow > 0:
@@ -31,6 +33,7 @@ class Glass:
                 split_overflow = overflow / 2
                 queue.append((child_left, split_overflow))
                 queue.append((child_right, split_overflow))
+
 
     def return_children(self):
 
@@ -57,8 +60,33 @@ class Glass:
             new_child.parent_left = self
             self.child_right = new_child
 
+        self.connect_children(left_or_right)
         return new_child
 
+    def connect_children(self, left_or_right):
+
+        if 'left' in left_or_right:
+            parent_glass = self.parent_left
+        elif 'right' in left_or_right:
+            parent_glass = self.parent_right
+
+        if not parent_glass:
+            return None
+
+        if 'left' in left_or_right:
+            child_to_connect = parent_glass.child_left
+        elif 'right' in left_or_right:
+            child_to_connect = parent_glass.child_right
+
+        if not child_to_connect:
+            child_to_connect = parent_glass.create_child('left')
+
+        if 'left' in left_or_right:
+            child_to_connect.child_right = self.child_left
+            self.child_left.parent_left = child_to_connect
+        elif 'right' in left_or_right:
+            child_to_connect.child_left = self.child_right
+            self.child_right.parent_right = child_to_connect
 
 
 
